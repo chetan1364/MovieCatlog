@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">Movie Detail — Movie Catalog</title>
+  <meta name="description" id="page-desc" content="Full movie details including cast, director, genres, and reviews." />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- ── Site Header ─────────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">🎬</div>
+        Movie<span>Catalog</span>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/" id="nav-catalog">Catalog</a></li>
+          <li><a href="/admin" id="nav-admin">Admin Panel</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Detail Content ──────────────────────────────────────────────────── -->
+  <div class="detail-page">
+    <!-- Back navigation -->
+    <a href="/" class="detail-back" id="back-link">
+      ← Back to Catalog
+    </a>
+
+    <!-- Loading skeleton -->
+    <div id="detail-skeleton">
+      <div class="detail-hero">
+        <div class="skeleton skeleton-poster" style="border-radius:18px;"></div>
+        <div style="display:flex;flex-direction:column;gap:1rem;flex:1;">
+          <div class="skeleton skeleton-line" style="height:2.5rem;width:70%;"></div>
+          <div class="skeleton skeleton-line medium"></div>
+          <div class="skeleton skeleton-line short"></div>
+          <div class="skeleton skeleton-line" style="height:80px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content (populated by JS) -->
+    <div id="detail-content" style="display:none;">
+
+      <!-- ── Hero: Poster + Info ────────────────────────────────────────── -->
+      <div class="detail-hero">
+        <div class="detail-poster">
+          <img id="detail-poster-img" src="" alt="" loading="lazy" />
+        </div>
+
+        <div class="detail-info">
+          <h1 id="detail-title" class="detail-title"></h1>
+
+          <!-- Genre badges -->
+          <div id="detail-genres" class="detail-genre-tags"></div>
+
+          <!-- Meta row: Year | Duration | Director -->
+          <div class="detail-meta-row">
+            <div class="detail-meta-item">
+              <span class="detail-meta-label">Year</span>
+              <span class="detail-meta-value" id="detail-year"></span>
+            </div>
+            <div class="detail-meta-item">
+              <span class="detail-meta-label">Duration</span>
+              <span class="detail-meta-value" id="detail-duration"></span>
+            </div>
+            <div class="detail-meta-item">
+              <span class="detail-meta-label">Rating</span>
+              <div class="rating-display">
+                <span class="rating-score" id="detail-score">—</span>
+                <div>
+                  <div class="stars-row" id="detail-stars"></div>
+                  <div class="rating-count" id="detail-rating-count"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Synopsis -->
+          <p id="detail-synopsis" class="detail-synopsis"></p>
+
+          <!-- Director card -->
+          <div class="director-card" id="detail-director-card">
+            <div class="director-avatar">🎬</div>
+            <div>
+              <div class="director-name" id="detail-director-name"></div>
+              <div class="director-meta" id="detail-director-meta"></div>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.5rem;">
+            <a id="edit-movie-btn" href="#" class="btn btn-secondary btn-sm" onclick="return false;">
+              ✏️ Edit Movie
+            </a>
+            <button id="delete-movie-btn" class="btn btn-danger btn-sm">
+              🗑️ Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Cast Section (M:N via movie_actors) ──────────────────────── -->
+      <section class="detail-section" id="cast-section">
+        <h2 class="detail-section-title">Cast</h2>
+        <div class="cast-grid" id="cast-grid"></div>
+      </section>
+
+      <!-- ── Reviews Section ──────────────────────────────────────────── -->
+      <section class="detail-section">
+        <h2 class="detail-section-title">Reviews</h2>
+        <div class="reviews-list" id="reviews-list"></div>
+      </section>
+
+      <!-- ── Submit Review Form ────────────────────────────────────────── -->
+      <section class="detail-section">
+        <h2 class="detail-section-title">Write a Review</h2>
+        <div class="review-form-card">
+          <form id="review-form" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="review-username">Your Name</label>
+              <input
+                type="text"
+                id="review-username"
+                class="form-input"
+                placeholder="Enter your name"
+                required
+                maxlength="80"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Your Score (1–10)</label>
+              <!-- Interactive star picker — maps to hidden score input -->
+              <div class="star-picker" id="star-picker" role="group" aria-label="Rate this movie">
+                <button type="button" class="star-btn" data-value="1" aria-label="1 star">★</button>
+                <button type="button" class="star-btn" data-value="2" aria-label="2 stars">★</button>
+                <button type="button" class="star-btn" data-value="3" aria-label="3 stars">★</button>
+                <button type="button" class="star-btn" data-value="4" aria-label="4 stars">★</button>
+                <button type="button" class="star-btn" data-value="5" aria-label="5 stars">★</button>
+                <button type="button" class="star-btn" data-value="6" aria-label="6 stars">★</button>
+                <button type="button" class="star-btn" data-value="7" aria-label="7 stars">★</button>
+                <button type="button" class="star-btn" data-value="8" aria-label="8 stars">★</button>
+                <button type="button" class="star-btn" data-value="9" aria-label="9 stars">★</button>
+                <button type="button" class="star-btn" data-value="10" aria-label="10 stars">★</button>
+              </div>
+              <input type="hidden" id="review-score" value="" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="review-text">Review (optional)</label>
+              <textarea
+                id="review-text"
+                class="form-textarea"
+                placeholder="Share your thoughts about this movie…"
+                rows="4"
+                maxlength="2000"
+              ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" id="review-submit-btn">
+              ⭐ Submit Review
+            </button>
+          </form>
+        </div>
+      </section>
+
+    </div><!-- /detail-content -->
+  </div><!-- /detail-page -->
+
+  <!-- ── Footer ──────────────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <p>Movie Catalog &mdash; Built for MCA relational database practice</p>
+  </footer>
+
+  <!-- ── Toast Notifications ─────────────────────────────────────────────── -->
+  <div class="toast-container" id="toast-container" aria-live="assertive"></div>
+
+  <script src="/js/movie.js"></script>
+</body>
+</html>

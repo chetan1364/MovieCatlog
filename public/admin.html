@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — Movie Catalog</title>
+  <meta name="description" content="Manage movies, directors, actors, and genres in the Movie Catalog admin panel." />
+  <meta name="referrer" content="no-referrer" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- ── Site Header ─────────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">🎬</div>
+        Movie<span>Catalog</span>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/" id="nav-catalog">Catalog</a></li>
+          <li><a href="/admin" class="active" id="nav-admin">Admin Panel</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Admin Content ───────────────────────────────────────────────────── -->
+  <div class="admin-page">
+
+    <div class="admin-header">
+      <div>
+        <h1>Admin Panel</h1>
+        <p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.25rem;">
+          Manage movies, cast, genres, and directors
+        </p>
+      </div>
+      <button class="btn btn-primary" id="add-movie-btn">
+        + Add Movie
+      </button>
+    </div>
+
+    <!-- ── Movies Table ──────────────────────────────────────────────────── -->
+    <div style="overflow-x:auto;">
+      <table class="data-table" id="admin-movies-table" aria-label="Movie management table">
+        <thead>
+          <tr>
+            <th>Poster</th>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Director</th>
+            <th>Genres</th>
+            <th>Avg Rating</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="admin-table-body">
+          <tr>
+            <td colspan="7" style="text-align:center;padding:3rem;color:var(--text-faint);">
+              Loading movies…
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /admin-page -->
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       ADD / EDIT MOVIE MODAL
+       The same modal is used for both add and edit. JS populates it accordingly.
+       ════════════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="movie-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal" id="movie-modal">
+
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Add Movie</h2>
+        <button class="modal-close" id="modal-close-btn" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="movie-form" novalidate>
+          <!-- Hidden field for edit mode -->
+          <input type="hidden" id="form-movie-id" value="" />
+
+          <!-- ── Core Fields ─────────────────────────────────────────────── -->
+          <div class="form-group">
+            <label class="form-label" for="form-title">Title *</label>
+            <input type="text" id="form-title" class="form-input" placeholder="Movie title" required maxlength="200" />
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label" for="form-year">Release Year</label>
+              <input type="number" id="form-year" class="form-input" placeholder="e.g. 2024" min="1888" max="2030" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="form-duration">Duration (mins)</label>
+              <input type="number" id="form-duration" class="form-input" placeholder="e.g. 120" min="1" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="form-director">Director *</label>
+            <select id="form-director" class="form-select" required>
+              <option value="">Select a director…</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="form-poster">Poster URL</label>
+            <input type="url" id="form-poster" class="form-input" placeholder="https://…" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="form-synopsis">Synopsis</label>
+            <textarea id="form-synopsis" class="form-textarea" placeholder="Brief description of the movie…" rows="4" maxlength="3000"></textarea>
+          </div>
+
+          <!-- ── Genre Selection (M:N via movie_genres) ─────────────────── -->
+          <div class="form-group">
+            <label class="form-label">Genres (select one or more)</label>
+            <div class="genre-select-grid" id="genre-pills" role="group" aria-label="Select genres">
+              <!-- Genre pills populated by JS from /api/genres -->
+            </div>
+            <input type="hidden" id="form-genre-ids" value="[]" />
+          </div>
+
+          <!-- ── Cast / Actors (M:N via movie_actors) ───────────────────── -->
+          <div class="form-group">
+            <label class="form-label">Cast Members</label>
+            <p style="font-size:0.8rem;color:var(--text-faint);margin-bottom:0.75rem;">
+              Link actors and their character names (stored in movie_actors junction table)
+            </p>
+            <div id="actors-container">
+              <!-- Dynamic actor rows added by JS -->
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="add-actor-row-btn" style="margin-top:0.5rem;">
+              + Add Actor
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="cancel-btn">Cancel</button>
+        <button type="button" class="btn btn-primary" id="save-movie-btn">💾 Save Movie</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Footer ──────────────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <p>Movie Catalog — Admin Panel &mdash; <a href="/">Back to Catalog</a></p>
+  </footer>
+
+  <!-- ── Toast Notifications ─────────────────────────────────────────────── -->
+  <div class="toast-container" id="toast-container" aria-live="assertive"></div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Catalog — Discover Great Films</title>
+  <meta name="description" content="Browse, search, and discover great movies. Filter by genre, sort by rating, and explore detailed cast and director information." />
+  <meta name="referrer" content="no-referrer" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- ── Site Header ─────────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">🎬</div>
+        Movie<span>Catalog</span>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/" class="active" id="nav-catalog">Catalog</a></li>
+          <li><a href="/admin" id="nav-admin">Admin Panel</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Hero Section ────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <h1>Discover Great Films</h1>
+    <p>Explore our curated collection of cinema classics and modern masterpieces.</p>
+  </section>
+
+  <!-- ── Search & Filter Controls ────────────────────────────────────────── -->
+  <div class="controls-bar" role="search" aria-label="Movie search and filters">
+    <!-- Keyword search — matches title, director, actor name -->
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        id="search-input"
+        class="search-input"
+        placeholder="Search movies, directors, actors…"
+        aria-label="Search movies"
+        autocomplete="off"
+      />
+    </div>
+
+    <!-- Genre filter — populated dynamically from /api/genres -->
+    <select id="genre-filter" class="filter-select" aria-label="Filter by genre">
+      <option value="">All Genres</option>
+    </select>
+
+    <!-- Release year range -->
+    <select id="year-from" class="filter-select" aria-label="From year">
+      <option value="">From Year</option>
+    </select>
+    <select id="year-to" class="filter-select" aria-label="To year">
+      <option value="">To Year</option>
+    </select>
+
+    <!-- Sort controls -->
+    <div class="sort-group">
+      <span class="sort-label">Sort by:</span>
+      <select id="sort-by" class="filter-select" aria-label="Sort movies by">
+        <option value="title">Title</option>
+        <option value="release_year">Year</option>
+        <option value="avg_rating">Rating</option>
+      </select>
+      <select id="sort-order" class="filter-select" aria-label="Sort order">
+        <option value="ASC">↑ Asc</option>
+        <option value="DESC">↓ Desc</option>
+      </select>
+    </div>
+
+    <!-- Clear all filters button -->
+    <button id="clear-filters" class="btn btn-secondary btn-sm" aria-label="Clear all filters">
+      ✕ Clear
+    </button>
+  </div>
+
+  <!-- ── Results Header ──────────────────────────────────────────────────── -->
+  <div class="section-header">
+    <p class="section-title" id="results-count">
+      Loading movies…
+    </p>
+  </div>
+
+  <!-- ── Movie Grid ───────────────────────────────────────────────────────── -->
+  <main id="movie-grid" class="movie-grid" aria-live="polite" aria-label="Movie grid">
+    <!-- Skeleton loading cards rendered by JS -->
+  </main>
+
+  <!-- ── Footer ──────────────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <p>Movie Catalog &bull; 
+       <a href="/admin">Admin Panel</a>
+    </p>
+  </footer>
+
+  <!-- ── Toast Notifications ─────────────────────────────────────────────── -->
+  <div class="toast-container" id="toast-container" aria-live="assertive"></div>
+
+  <script src="/js/catalog.js"></script>
+</body>
+</html>
